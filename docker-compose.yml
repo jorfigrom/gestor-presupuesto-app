@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: user  # Usuario para la conexión
+      POSTGRES_PASSWORD: password # Contraseña
+      POSTGRES_DB: presupuestodb # Nombre de la BD
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data

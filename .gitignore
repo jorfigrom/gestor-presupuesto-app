@@ -1,0 +1,24 @@
+# filepath: c:\Users\jf260\OneDrive\Escritorio\Proyectos\gestor-presupuesto-backend\.gitignore
+# Java/Maven
+/target/
+/.mvn/
+*.log
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Node.js (para el frontend)
+gestor-presupuesto-frontend/node_modules/
+gestor-presupuesto-frontend/.next/
+gestor-presupuesto-frontend/out/
+gestor-presupuesto-frontend/.env.local
+gestor-presupuesto-frontend/.env.development.local
+gestor-presupuesto-frontend/.env.test.local
+gestor-presupuesto-frontend/.env.production.local
+gestor-presupuesto-frontend/npm-debug.log*
+gestor-presupuesto-frontend/yarn-debug.log*
+gestor-presupuesto-frontend/yarn-error.log*
+
+# VSCode
+.vscode/
