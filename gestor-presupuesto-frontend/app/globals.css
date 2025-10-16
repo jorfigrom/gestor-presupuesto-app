@@ -14,8 +14,42 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --background: #f5f5f5;
     --foreground: #ededed;
+  }
+}
+
+.nav-items {
+    @apply flex flex-col px-6 h-full;
+    .container {
+      @apply flex flex-col justify-between h-full;
+      nav {
+        @apply flex flex-col gap-3.5 pt-9;
+      }
+    }
+  }
+.header {
+  @apply flex items-center justify-between p-4 shadow-md;
+}
+
+.sidebar {
+  @apply flex flex-col w-64 h-screen p-4 bg-white border-r border-gray-200;
+}
+
+.link-logo {
+    @apply flex items-center gap-2 mb-10;
+    h1 {
+      @apply text-xl font-bold text-gray-900;
+    }
+  }
+
+.summary-card {
+  @apply bg-white p-6 rounded-lg shadow-md;
+  h3 {
+    @apply text-sm font-medium text-gray-500;
+  }
+  p {
+    @apply text-3xl font-bold text-gray-900 mt-2;
   }
 }
 
