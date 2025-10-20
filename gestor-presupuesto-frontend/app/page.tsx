@@ -1,6 +1,9 @@
 'use client'; // Directiva para que el componente se ejecute en el cliente (navegador)
 
 import NavItems from '@/components/NavItems';
+import Searchbar from '@/components/searchBar';
+import Image from 'next/image';
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
 
 // Definimos un tipo para nuestras transacciones para usar TypeScript
@@ -16,7 +19,7 @@ export default function HomePage() {
 
   // Estado para almacenar la lista de transacciones
   const [transacciones, setTransacciones] = useState<Transaccion[]>([]);
-  
+
   // Estado para manejar errores o mensajes de carga
   const [loading, setLoading] = useState(true);
 
@@ -51,6 +54,8 @@ export default function HomePage() {
     .filter(t => t.tipo === 'GASTO')
     .reduce((acc, t) => acc + t.cantidad, 0);
 
+  const totalBalance = ingresosTotales - gastosTotales;
+
   const numeroOperaciones = transacciones.length;
 
   // Un estado de carga más centrado y visual
@@ -62,17 +67,23 @@ export default function HomePage() {
     );
   }
 
+
+
   return (
     <div className="flex min-h-screen bg-gray-50">
       <NavItems />
-      
+
       <main className="flex-1 p-8">
         {/* Encabezado de la página */}
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800">Bienvenido</h1>
-          <a href="/crear-transaccion" className="bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-blue-700 transition-colors">
-            Añadir Operación
-          </a>
+        </div>
+
+        <div className="mb-8 p-6 bg-white rounded-lg shadow-md">
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">Balance Total</h2>
+          <p className={`text-3xl font-semibold ${totalBalance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+            ${totalBalance.toFixed(2)}
+          </p>
         </div>
 
         {/* Tarjetas de Resumen */}
@@ -93,9 +104,24 @@ export default function HomePage() {
 
         {/* Tabla de Transacciones Recientes */}
         <div className="mt-8 bg-white rounded-lg shadow-md overflow-x-auto">
-          <h2 className="text-xl font-bold text-gray-800 p-4 border-b">
-            Historial de Transacciones
+          <h2 className="text-xl font-bold text-gray-800 p-4 border-b flex justify-between items-center">
+
+            {/* 1. Elemento de la izquierda */}
+            <span className="text-xl font-bold text-gray-800">
+              Historial de Transacciones
+            </span>
+
+            <span className="text-gray-500 text-sm">
+              <Searchbar routeType="" />
+            </span>
+
+            {/* 2. Elemento de la derecha (Botón) */}
+            <a href="/crear-transaccion" className="bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-blue-700 transition-colors">
+              Añadir Operación
+            </a>
+
           </h2>
+
           <table className="w-full min-w-full text-left">
             <thead className="bg-gray-50">
               <tr>
@@ -119,11 +145,24 @@ export default function HomePage() {
                       </span>
                     </td>
                     <td className="p-4 text-gray-600">{new Date(transaccion.fecha).toLocaleDateString()}</td>
+                    <td className="p-4">
+                      <Link href={`/edit/${transaccion.id}`}>
+                        <div className="flex cursor-pointer gap-3 rounded-lg bg-gray-200 px-4 py-2 hover:bg-gray-300">
+                          <Image
+                            src="/assets/edit.svg"
+                            alt="Editar"
+                            width={16}
+                            height={16}
+                          />
+                          <p className="text-gray-700 max-sm:hidden">Editar</p>
+                        </div>
+                      </Link>
+                    </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={4} className="text-center p-8 text-gray-500">
+                  <td colSpan={5} className="text-center p-8 text-gray-500">
                     No hay transacciones para mostrar.
                   </td>
                 </tr>
