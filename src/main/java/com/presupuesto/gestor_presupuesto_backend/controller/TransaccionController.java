@@ -18,6 +18,7 @@ import com.presupuesto.gestor_presupuesto_backend.model.Transaccion;
 import com.presupuesto.gestor_presupuesto_backend.service.TransaccionService;
 
 
+
 @RestController
 @RequestMapping("/api/transacciones") // Ruta base para todas las peticiones de este controlador
 
@@ -88,4 +89,6 @@ public class TransaccionController {
         transaccionService.delete(id);
         return ResponseEntity.noContent().build(); // Devuelve 204 No Content, estándar para deletes exitosos
     }
+
+    
 }
