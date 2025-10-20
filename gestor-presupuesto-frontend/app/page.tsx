@@ -70,9 +70,9 @@ export default function HomePage() {
         {/* Encabezado de la página */}
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800">Bienvenido</h1>
-          <button className="bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-blue-700 transition-colors">
+          <a href="/crear-transaccion" className="bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-blue-700 transition-colors">
             Añadir Operación
-          </button>
+          </a>
         </div>
 
         {/* Tarjetas de Resumen */}
