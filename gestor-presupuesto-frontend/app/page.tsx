@@ -23,6 +23,9 @@ export default function HomePage() {
   // Estado para manejar errores o mensajes de carga
   const [loading, setLoading] = useState(true);
 
+  // Nuevo estado para el término de búsqueda
+  const [searchTerm, setSearchTerm] = useState("");
+
   // useEffect se ejecuta después de que el componente se renderiza
   useEffect(() => {
     //obtener los datos de la API
@@ -44,6 +47,11 @@ export default function HomePage() {
 
     fetchTransacciones();
   }, []); // El array vacío [] significa que este efecto se ejecuta solo una vez
+
+  // Filtrar las transacciones según el término de búsqueda
+  const transaccionesFiltradas = transacciones.filter((transaccion) =>
+    transaccion.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   // Cálculos para las tarjetas de resumen
   const ingresosTotales = transacciones
@@ -68,7 +76,34 @@ export default function HomePage() {
   }
 
 
+  function handleDelete(id: number): void {
+    const confirmed = window.confirm('¿Seguro que deseas eliminar esta transacción?');
+    if (!confirmed) return;
 
+    (async () => {
+      try {
+        setLoading(true);
+        const res = await fetch(`http://localhost:8080/api/transacciones/${id}`, {
+          method: 'DELETE',
+        });
+
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(text || 'Error al eliminar la transacción');
+        }
+
+        // Actualizar el estado local eliminando la transacción borrada
+        setTransacciones(prev => prev.filter(t => t.id !== id));
+      } catch (error) {
+        console.error(error);
+
+        
+        alert('No se pudo eliminar la transacción. Intenta de nuevo.');
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }
   return (
     <div className="flex min-h-screen bg-gray-50">
       <NavItems />
@@ -111,9 +146,8 @@ export default function HomePage() {
               Historial de Transacciones
             </span>
 
-            <span className="text-gray-500 text-sm">
-              <Searchbar routeType="" />
-            </span>
+            {/* Pasar la función para actualizar el término de búsqueda */}
+            <Searchbar onSearch={(term) => setSearchTerm(term)} />
 
             {/* 2. Elemento de la derecha (Botón) */}
             <a href="/crear-transaccion" className="bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-blue-700 transition-colors">
@@ -132,8 +166,8 @@ export default function HomePage() {
               </tr>
             </thead>
             <tbody>
-              {transacciones.length > 0 ? (
-                transacciones.map((transaccion) => (
+              {transaccionesFiltradas.length > 0 ? (
+                transaccionesFiltradas.map((transaccion) => (
                   <tr key={transaccion.id} className="border-t hover:bg-gray-50">
                     <td className="p-4 text-gray-800">{transaccion.nombre}</td>
                     <td className={`p-4 font-medium ${transaccion.tipo === 'INGRESO' ? 'text-green-600' : 'text-red-600'}`}>
@@ -147,6 +181,7 @@ export default function HomePage() {
                     <td className="p-4 text-gray-600">{new Date(transaccion.fecha).toLocaleDateString()}</td>
                     <td className="p-4">
                       <Link href={`/edit/${transaccion.id}`}>
+
                         <div className="flex cursor-pointer gap-3 rounded-lg bg-gray-200 px-4 py-2 hover:bg-gray-300">
                           <Image
                             src="/assets/edit.svg"
@@ -157,6 +192,21 @@ export default function HomePage() {
                           <p className="text-gray-700 max-sm:hidden">Editar</p>
                         </div>
                       </Link>
+
+                    </td>
+                    <td className="p-4">
+                      <button
+                        onClick={() => handleDelete(transaccion.id)}
+                        className="flex cursor-pointer gap-3 rounded-lg bg-red-200 px-4 py-2 hover:bg-red-300"
+                      >
+                        <Image
+                          src="/assets/delete.svg"
+                          alt="Eliminar"
+                          width={16}
+                          height={16}
+                        />
+                        <p className="text-gray-700 max-sm:hidden">Eliminar</p>
+                      </button>
                     </td>
                   </tr>
                 ))

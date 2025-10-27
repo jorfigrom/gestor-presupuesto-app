@@ -31,8 +31,12 @@ public class TransaccionService {
         return transaccionRepository.save(transaccion);
     }
 
-    public void delete(Long Id){
-        transaccionRepository.deleteById(Id);
+    public void delete(Long id) {
+        if (transaccionRepository.existsById(id)) {
+            transaccionRepository.deleteById(id);
+        } else {
+            throw new IllegalArgumentException("Transacción no encontrada con ID: " + id);
+        }
     }
 
     public Transaccion update(Long id, Transaccion transaccionActualizada) {

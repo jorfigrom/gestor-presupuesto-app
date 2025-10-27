@@ -1,30 +1,21 @@
 "use client";
 
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Input } from "./ui/input";
+import { useState } from "react";
 
 interface Props {
-  routeType: string;
+  onSearch: (term: string) => void; // Nueva prop para manejar la búsqueda
 }
 
-function Searchbar({ routeType }: Props) {
-  const router = useRouter();
+function Searchbar({ onSearch }: Props) {
   const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState("all"); // Estado para el filtro
 
-  // query after 0.3s of no input
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      const query = new URLSearchParams();
-      if (search) query.append("q", search);
-      if (filter !== "all") query.append("filter", filter);
-
-      router.push(`/${routeType}?${query.toString()}`);
-    }, 300);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [search, filter, routeType]);
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const term = e.target.value;
+    setSearch(term);
+    onSearch(term); // Llamar a la función pasada desde el componente padre
+  };
 
   return (
     <div className="searchbar flex flex-col gap-4">
@@ -36,12 +27,12 @@ function Searchbar({ routeType }: Props) {
           height={24}
           className="object-contain"
         />
-        <input
+        <Input
           id="text"
           value={search}
-          onChange={(e) => setSearch((e.target as HTMLInputElement).value)}
-          placeholder="Buscar"
-          className="no-focus searchbar_input"
+          onChange={handleSearchChange}
+          placeholder={`Buscar`}
+          className="no-focus searchbar_input bg-gray-200 text-gray-800 border border-gray-300 rounded-lg p-2"
         />
       </div>
     </div>
