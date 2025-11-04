@@ -1,8 +1,12 @@
 package com.presupuesto.gestor_presupuesto_backend.model;
 
-import java.util.Date;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -14,15 +18,22 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-
 public class Transaccion {
 
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String tipo; //Ingreso o Gasto
+
+    @Enumerated(EnumType.STRING)
+    private TipoTransaccion tipo; // INGRESO o GASTO
+
     private String nombre;
-    private Double cantidad;
-    private Date fecha;
+
+    @Column(precision = 12, scale = 2)
+    private BigDecimal cantidad;
+
+    private LocalDate fecha;
+
     private String descripcion; //Opcional
 
 }

@@ -4,6 +4,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.presupuesto.gestor_presupuesto_backend.dto.TransaccionRequest;
+import com.presupuesto.gestor_presupuesto_backend.exception.ResourceNotFoundException;
+import com.presupuesto.gestor_presupuesto_backend.mapper.TransaccionMapper;
 import com.presupuesto.gestor_presupuesto_backend.model.Transaccion;
 import com.presupuesto.gestor_presupuesto_backend.repository.TransaccionRepository;
 
@@ -14,42 +17,42 @@ public class TransaccionService {
 
     public TransaccionService(TransaccionRepository transaccionRepository) {
         this.transaccionRepository = transaccionRepository;
-    }  
-    
+    }
+
     public List<Transaccion> getAll(){
         return transaccionRepository.findAll();
     }
 
-    public Transaccion findById(Long Id){
-        return transaccionRepository.findById(Id).orElse(null);
+    public Transaccion findById(Long id){
+        return transaccionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Transacción no encontrada con ID: " + id));
     }
 
-    public Transaccion save(Transaccion transaccion){
-        if (transaccion.getCantidad() < 0) {
+    public Transaccion createFromDto(TransaccionRequest req){
+        Transaccion t = TransaccionMapper.toEntity(req);
+        if (t.getCantidad() != null && t.getCantidad().signum() < 0) {
             throw new IllegalArgumentException("La cantidad no puede ser negativa");
         }
-        return transaccionRepository.save(transaccion);
+        return transaccionRepository.save(t);
+    }
+
+    public Transaccion updateFromDto(Long id, TransaccionRequest req) {
+        return transaccionRepository.findById(id).map(existing -> {
+            existing.setNombre(req.getNombre());
+            existing.setCantidad(req.getCantidad());
+            existing.setTipo(req.getTipo());
+            existing.setFecha(req.getFecha());
+            existing.setDescripcion(req.getDescripcion());
+            return transaccionRepository.save(existing);
+        }).orElseThrow(() -> new ResourceNotFoundException("Transacción no encontrada con ID: " + id));
     }
 
     public void delete(Long id) {
         if (transaccionRepository.existsById(id)) {
             transaccionRepository.deleteById(id);
         } else {
-            throw new IllegalArgumentException("Transacción no encontrada con ID: " + id);
+            throw new ResourceNotFoundException("Transacción no encontrada con ID: " + id);
         }
     }
-
-    public Transaccion update(Long id, Transaccion transaccionActualizada) {
-        return transaccionRepository.findById(id).map(transaccionExistente -> {
-            transaccionExistente.setNombre(transaccionActualizada.getNombre());
-            transaccionExistente.setCantidad(transaccionActualizada.getCantidad());
-            transaccionExistente.setTipo(transaccionActualizada.getTipo());
-            transaccionExistente.setFecha(transaccionActualizada.getFecha());
-            transaccionExistente.setDescripcion(transaccionActualizada.getDescripcion());
-            return transaccionRepository.save(transaccionExistente);
-        }).orElse(null);
-    }
-
-
 
 }
